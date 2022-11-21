@@ -3,14 +3,14 @@ const seg = document.querySelector('.seconds');
 const min = document.querySelector('.minutes');
 
 let miliNum = 99;
-let segNum = 59;
-let minNum = 59;
-let INTERVALO;
+let segNum = 10;
+let minNum = 1;
+let INTERVALO
 
 function milissegundos() {
   miliNum--;
 
-  if (miliNum == 0) {
+  if (miliNum < 0) {
     miliNum = 99;
     return segundos();
   }
@@ -22,7 +22,7 @@ function milissegundos() {
 
 function segundos() {
   segNum--;
-  if (segNum == 0) {
+  if (segNum < 0) {
     segNum = 59;
     return minutos();
   }
@@ -34,6 +34,7 @@ function segundos() {
 
 function minutos() {
   minNum--;
+  if (minNum < 0) return 'finish';
   if (minNum < 10) {
     return (min.innerHTML = '0' + minNum);
   }
@@ -41,25 +42,27 @@ function minutos() {
 }
 
 function iniciar() {
+  document.querySelector('.iniciar').style.display = 'none';
   miliseg.innerHTML = miliNum;
   seg.innerHTML = segNum;
   min.innerHTML = minNum;
-  clearInterval(INTERVALO);
+  clearInterval(INTERVALO)
   INTERVALO = setInterval(() => {
-    milissegundos();
+    let resp = milissegundos();
+    if(resp === "finish") clearInterval(INTERVALO)
   }, 10);
 }
 
-function parar() {
-  clearInterval(INTERVALO);
+function validateSize(e) {
+  console.log(e.target);
+  if (e.target.value > 9) e.target.value = 9;
 }
 
-function resetar() {
-  clearInterval(INTERVALO);
-  miliNum = 99;
-  segNum = 59;
-  minNum = 59;
-  miliseg.innerHTML = '00';
-  seg.innerHTML = '00';
-  min.innerHTML = '01';
+function checkPasswd(){
+  let n1 = document.getElementById("number1").value;
+  let n2 = document.getElementById("number2").value;
+  let n3 = document.getElementById("number3").value;
+  let n4 = document.getElementById("number4").value;
+
+  console.log(n1+n2+n3+n4, process.env.PASSWD)
 }

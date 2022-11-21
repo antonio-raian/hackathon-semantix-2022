@@ -1,0 +1,23 @@
+{
+  "name": "hackathon",
+  "version": "1.0.0",
+  "description": "Hackathon to Kapisociety squad",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antonio-raian/hackathon-semantix-2022.git"
+  },
+  "author": "Antonio Mendes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antonio-raian/hackathon-semantix-2022/issues"
+  },
+  "homepage": "https://github.com/antonio-raian/hackathon-semantix-2022#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

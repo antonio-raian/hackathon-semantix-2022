@@ -13,10 +13,15 @@ body{
     background-color: #5E17EB;
     display: flex;
     justify-content: center;
-    margin: -10;
 }
 .banner img{
     size: 100%;
+}
+.main{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 70%;
 }
 
 .bomb{
@@ -24,26 +29,31 @@ body{
     align-items: center;
     flex-direction: column;
     width: 100%;
-    height: 60%;
+    height: 100%;
+    margin: 10;
+
     background: url("../images/bomb.png") no-repeat;
     background-size: 900px;
-    background-position: 300px;
+    /* background-size:contain; */
+    background-position:center;
 }
 
 .timer{
     color:red;
     background-color: black;
-    margin-top: 135;
-    margin-left: -95;
     font-size: 60;
+    margin-left: -250;
+    margin-top: 85;
     /* font-family: DS-Digib; */
-    width: 20%;
+    width: 19%;
     text-align: center;
     border-radius: 10px;
 }
 .passwd{
     display: flex;
     width: 100%;
+    height: 50%;
+    align-items: center;
     justify-content: center;
 }
 .passwd input{
@@ -51,6 +61,16 @@ body{
     font-size: 60;
     margin:0 10px;
     padding: 10 20;
+    font-family: DS-Digib;
+    width: 100;
+    text-align: center;
+}
+
+.passwd button{
+    background-color: green;
+    font-size: 30;
+    margin:0 10px;
+    padding: 10 10;
     font-family: DS-Digib;
     width: 100;
     text-align: center;
