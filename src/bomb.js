@@ -1,21 +1,23 @@
 import { useRef, useState } from 'react';
 import bomb from './assets/bomb.png';
-export default function Bomb() {
+
+export default function Bomb(props) {
   const Ref = useRef(null);
 
   // The state for our timer
   const [timer, setTimer] = useState('01:00:00');
+  const [init, setInit] = useState('');
 
   const [passwd, setPasswd] = useState({
-    number1: '',
-    number2: '',
-    number3: '',
-    number4: '',
+    number1: 1,
+    number2: 2,
+    number3: 3,
+    number4: 4,
   });
 
   const getTimeRemaining = (e) => {
     const total = Date.parse(e) - Date.parse(new Date());
-    console.log({ total });
+    if (total === 0) return props.changeScreen('fail');
     const seconds = Math.floor((total / 1000) % 60);
     const minutes = Math.floor((total / 1000 / 60) % 60);
     const hours = Math.floor(((total / 1000) * 60 * 60) % 24);
@@ -51,13 +53,16 @@ export default function Bomb() {
   const getDeadTime = () => {
     let deadline = new Date();
 
-    deadline.setHours(deadline.getHours() + 1);
+    deadline.setSeconds(deadline.getSeconds() + 10);
     return deadline;
   };
 
   const iniciar = () => {
-    setTimer('01:00:00');
-    clearTimer(getDeadTime());
+    setInit('none');
+    if (!Ref.current) {
+      setTimer('01:00:00');
+      clearTimer(getDeadTime());
+    }
   };
 
   const onChange = (e) => {
@@ -67,11 +72,22 @@ export default function Bomb() {
     });
   };
 
+  const checkPasswd = () => {
+    const concat = '' + passwd.number1 + passwd.number2 + passwd.number3 + passwd.number4;
+    console.log(concat, process.env.REACT_APP_PASSWD);
+    if (concat === process.env.REACT_APP_PASSWD) {
+      clearInterval(Ref.current);
+      props.changeScreen('success');
+      return console.log('CERTO');
+    }
+    return console.log('ERRADO');
+  };
+
   return (
     <div
       className="main"
       style={{
-        display: 'grid',
+        display: props.display || 'grid',
         gridTemplateRows: '300px 30%',
         gridTemplateColumns: '100%',
         justifyContent: 'center',
@@ -102,14 +118,12 @@ export default function Bomb() {
           <span className="minutes">{timer}</span>
         </p>
         <div>
-          <button onClick={iniciar} className="iniciar">
+          <button onClick={iniciar} style={{ display: init }} className="iniciar">
             INICIAR
           </button>
         </div>
       </div>
-      <div
-        className="passwd"
-      >
+      <div className="passwd" style={{ display: !init ? 'none' : '' }}>
         <input
           type="number"
           name="number1"
@@ -146,7 +160,7 @@ export default function Bomb() {
           onChange={onChange}
           value={passwd.number4}
         />
-        <button onclick="checkPasswd()" className="btn-check">
+        <button onClick={checkPasswd} className="btn-check">
           Check
         </button>
       </div>
