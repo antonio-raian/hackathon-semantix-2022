@@ -123,14 +123,14 @@ export default function Bomb(props) {
     <div
       className="main"
       style={{
-        display: props.display || 'grid',
-        gridTemplateRows: '300px 30%',
-        gridTemplateColumns: '100%',
+        display: props.display || 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url(${bomb})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '980px',
-        backgroundPositionX: '55%',
+        // backgroundImage: `url(${bomb})`,
+        // backgroundRepeat: 'no-repeat',
+        // backgroundSize: '980px',
+        // backgroundPositionX: '55%',
       }}
     >
       <div
@@ -138,17 +138,21 @@ export default function Bomb(props) {
         style={{
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center', 
         }}
       >
+        <img src={bomb} alt="bomb" width={950}/>
         <p
           className="timer"
           style={{
             color: 'red',
             backgroundColor: 'black',
-            fontSize: 80,
+            fontSize: 112,
             textAlign: 'center',
             borderRadius: '10px',
-            margin: '-50px 0 0 31%',
+            marginTop: '5%',
+            marginLeft: '-11%',
+            position: 'absolute'
           }}
         >
           <span className="minutes">{hour + ':' + minutes + ':' + seconds}</span>
