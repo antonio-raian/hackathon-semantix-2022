@@ -6,20 +6,27 @@ import Bomb from './bomb';
 
 function App() {
   const [screen, setScreen] = useState('bomb');
+  const [winner, setWinner] = useState('Antonio Mendes');
 
   return (
     <div className="App">
       <Banner />
-      <Bomb display={screen === 'bomb' ? '' : 'none'} changeScreen={setScreen}/>
+      <Bomb
+        display={screen === 'bomb' ? '' : 'none'}
+        changeScreen={setScreen}
+        setWinner={setWinner}
+      />
       <div
         className="success"
         style={{
           display: screen === 'success' ? 'flex' : 'none',
+          flexDirection: 'column',
           justifyContent: 'center',
-          height: '450px',
+          alignItems: 'center',
         }}
       >
-        <img alt="sucesso" src={require('./assets/dicaprioSucess.gif')} />
+        <h1 style={{ color: 'white' }}>{winner}</h1>
+        <img alt="sucesso" src={require('./assets/dicaprioSucess.gif')} width={700} />
       </div>
       <div
         className="fail"

@@ -1,12 +1,16 @@
-import { useRef, useState } from 'react';
+import userEvent from '@testing-library/user-event';
+import { useEffect, useRef, useState } from 'react';
 import bomb from './assets/bomb.png';
+import api from './utils/api';
 
 export default function Bomb(props) {
   const Ref = useRef(null);
 
   // The state for our timer
-  const [timer, setTimer] = useState('01:00:00');
-  const [init, setInit] = useState('');
+  const [hour, setHour] = useState(1);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [active, setActive] = useState(false);
 
   const [passwd, setPasswd] = useState({
     number1: 1,
@@ -15,72 +19,105 @@ export default function Bomb(props) {
     number4: 4,
   });
 
-  const getTimeRemaining = (e) => {
-    const total = Date.parse(e) - Date.parse(new Date());
-    if (total === 0) return props.changeScreen('fail');
-    const seconds = Math.floor((total / 1000) % 60);
-    const minutes = Math.floor((total / 1000 / 60) % 60);
-    const hours = Math.floor(((total / 1000) * 60 * 60) % 24);
-    return {
-      total,
-      hours,
-      minutes,
-      seconds,
+  useEffect(() => {
+    const x = async () => {
+      await api
+        .get('/timer')
+        .then((res) => {
+          console.log('Resposta', { res });
+          const { hour, minNum, segNum, active, winner } = res.data;
+          if (winner) {
+            props.changeScreen('success');
+            props.setWinner(winner.name);
+          }
+          setHour(addZero(hour));
+          setMinutes(addZero(minNum));
+          setSeconds(addZero(segNum));
+          setActive(active);
+          active && iniciar();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     };
-  };
+    x();
+  }, []);
 
-  const startTimer = (e) => {
-    let { total, hours, minutes, seconds } = getTimeRemaining(e);
-    if (total >= 0) {
-      setTimer(
-        (hours > 9 ? hours : '0' + hours) +
-          ':' +
-          (minutes > 9 ? minutes : '0' + minutes) +
-          ':' +
-          (seconds > 9 ? seconds : '0' + seconds)
-      );
+  const segundos = () => {
+    let sec = seconds - 1;
+    if (sec < 0) {
+      sec = 59;
+      setSeconds(sec);
+      return minutos();
     }
+    if (sec < 10) {
+      return setSeconds('0' + sec);
+    }
+    setSeconds(sec);
   };
 
-  const clearTimer = (e) => {
-    if (Ref.current) clearInterval(Ref.current);
-    const id = setInterval(() => {
-      startTimer(e);
-    }, 1000);
-    Ref.current = id;
+  const minutos = () => {
+    let minNum = minutes - 1;
+    if (minNum < 0) {
+      minNum = 59;
+      setMinutes(minNum);
+      return horas();
+    }
+    if (minNum < 10) {
+      return setMinutes('0' + minNum);
+    }
+    setMinutes(minNum);
   };
 
-  const getDeadTime = () => {
-    let deadline = new Date();
-
-    deadline.setSeconds(deadline.getSeconds() + 10);
-    return deadline;
+  const horas = () => {
+    let hr = hour - 1;
+    if (hr < 0) {
+      clearInterval(Ref.current);
+      props.changeScreen('fail');
+    }
+    if (hr < 10) {
+      return setHour('0' + hr);
+    }
+    setHour(hr);
   };
+
+  useEffect(() => {
+    iniciar();
+  });
 
   const iniciar = () => {
-    setInit('none');
-    if (!Ref.current) {
-      setTimer('01:00:00');
-      clearTimer(getDeadTime());
+    if (active) {
+      clearInterval(Ref.current);
+      Ref.current = setInterval(() => {
+        segundos();
+      }, 1000);
     }
   };
 
   const onChange = (e) => {
     const value = e.target.value > 9 ? 9 : e.target.value;
-    setPasswd({
-      [e.target.name]: value,
+    setPasswd({ ...passwd, [e.target.name]: value });
+  };
+
+  const checkPasswd = async () => {
+    const id = prompt('Identifique-se:');
+    const concat = '' + passwd.number1 + passwd.number2 + passwd.number3 + passwd.number4;
+    return await api.post('/passwd', { id, passwd: concat }).then((res) => {
+      console.log(res.data);
+      const { success, user, msg } = res.data;
+      if (success) {
+        clearInterval(Ref.current);
+        props.changeScreen('success');
+        props.setWinner(user.name);
+        return console.log('CERTO');
+      }
+      alert(msg);
+      return console.log('ERRADO');
     });
   };
 
-  const checkPasswd = () => {
-    const concat = '' + passwd.number1 + passwd.number2 + passwd.number3 + passwd.number4;
-    console.log(concat, process.env.REACT_APP_PASSWD);
-    if (concat === process.env.REACT_APP_PASSWD) {
-      clearInterval(Ref.current);
-      props.changeScreen('success');
-      return console.log('CERTO');
-    }
-    return console.log('ERRADO');
+  const addZero = (num) => {
+    return num > 9 ? num : '0' + num;
   };
 
   return (
@@ -115,15 +152,10 @@ export default function Bomb(props) {
             margin: '-50px 0 0 31%',
           }}
         >
-          <span className="minutes">{timer}</span>
+          <span className="minutes">{hour + ':' + minutes + ':' + seconds}</span>
         </p>
-        <div>
-          <button onClick={iniciar} style={{ display: init }} className="iniciar">
-            INICIAR
-          </button>
-        </div>
       </div>
-      <div className="passwd" style={{ display: !init ? 'none' : '' }}>
+      <div className="passwd">
         <input
           type="number"
           name="number1"
