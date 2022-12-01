@@ -12,10 +12,10 @@ export default function Bomb(props) {
   const [active, setActive] = useState(false);
 
   const [passwd, setPasswd] = useState({
-    number1: 1,
-    number2: 2,
-    number3: 3,
-    number4: 4,
+    number1: '',
+    number2: '',
+    number3: '',
+    number4: '',
   });
 
   useEffect(() => {
@@ -99,20 +99,24 @@ export default function Bomb(props) {
   };
 
   const checkPasswd = async () => {
+    if(!passwd.number1 || !passwd.number2 || !passwd.number3 || !passwd.number4) return alert("Precisa preencher todos os dígitos!")
     const id = prompt('Identifique-se:');
-    const concat = '' + passwd.number1 + passwd.number2 + passwd.number3 + passwd.number4;
-    return await api.post('/passwd', { id, passwd: concat }).then((res) => {
-      console.log(res.data);
-      const { success, user, msg } = res.data;
-      if (success) {
-        clearInterval(Ref.current);
-        props.changeScreen('success');
-        props.setWinner(user.name);
-        return console.log('CERTO');
-      }
-      alert(msg);
-      return console.log('ERRADO');
-    });
+    console.log({ id });
+    if (id) {
+      const concat = '' + passwd.number1 + passwd.number2 + passwd.number3 + passwd.number4;
+      return await api.post('/passwd', { id, passwd: concat }).then((res) => {
+        console.log(res.data);
+        const { success, user, msg } = res.data;
+        if (success) {
+          clearInterval(Ref.current);
+          props.changeScreen('success');
+          props.setWinner(user.name);
+          return console.log('CERTO');
+        }
+        alert(msg);
+        return console.log('ERRADO');
+      });
+    }
   };
 
   const addZero = (num) => {
@@ -138,10 +142,10 @@ export default function Bomb(props) {
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center', 
+          justifyContent: 'center',
         }}
       >
-        <img src={bomb} alt="bomb" width={950}/>
+        <img src={bomb} alt="bomb" width={950} />
         <p
           className="timer"
           style={{
@@ -152,7 +156,7 @@ export default function Bomb(props) {
             borderRadius: '10px',
             marginTop: '5%',
             marginLeft: '-11%',
-            position: 'absolute'
+            position: 'absolute',
           }}
         >
           <span className="minutes">{hour + ':' + minutes + ':' + seconds}</span>
