@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event';
 import { useEffect, useRef, useState } from 'react';
 import bomb from './assets/bomb.png';
 import api from './utils/api';
