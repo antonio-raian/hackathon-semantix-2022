@@ -4,6 +4,7 @@ import api from './utils/api';
 
 export default function Bomb(props) {
   const Ref = useRef(null);
+  const Ref2 = useRef(null);
 
   // The state for our timer
   const [hour, setHour] = useState(1);
@@ -19,11 +20,11 @@ export default function Bomb(props) {
   });
 
   useEffect(() => {
-    const x = async () => {
+    const x = async (str) => {
       await api
         .get('/timer')
         .then((res) => {
-          console.log('Resposta', { res });
+          console.log(str, { res });
           const { hour, minNum, segNum, active, winner } = res.data;
           if (winner) {
             props.changeScreen('success');
@@ -39,7 +40,10 @@ export default function Bomb(props) {
           console.log(e);
         });
     };
-    x();
+    Ref2.current = setInterval(() => {
+      x('5 Minutos')
+    }, 300000);
+    x('Inicio');
   }, []);
 
   const segundos = () => {
@@ -99,7 +103,8 @@ export default function Bomb(props) {
   };
 
   const checkPasswd = async () => {
-    if(!passwd.number1 || !passwd.number2 || !passwd.number3 || !passwd.number4) return alert("Precisa preencher todos os dígitos!")
+    if (!passwd.number1 || !passwd.number2 || !passwd.number3 || !passwd.number4)
+      return alert('Precisa preencher todos os dígitos!');
     const id = prompt('Identifique-se:');
     console.log({ id });
     if (id) {
