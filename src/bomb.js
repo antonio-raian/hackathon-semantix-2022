@@ -29,6 +29,15 @@ export default function Bomb(props) {
           if (winner) {
             props.changeScreen('success');
             props.setWinner(winner.name);
+            clearInterval(Ref2.current);
+            clearInterval(Ref.current);
+            return;
+          }
+          if (hour < 0) {
+            clearInterval(Ref2.current);
+            clearInterval(Ref.current);
+            props.changeScreen('fail');
+            return;
           }
           setHour(addZero(hour));
           setMinutes(addZero(minNum));
@@ -41,7 +50,7 @@ export default function Bomb(props) {
         });
     };
     Ref2.current = setInterval(() => {
-      x('5 Minutos')
+      x('5 Minutos');
     }, 300000);
     x('Inicio');
   }, []);
